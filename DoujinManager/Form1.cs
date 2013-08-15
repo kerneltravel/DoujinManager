@@ -315,7 +315,7 @@ namespace DoujinManager
                         {
                             case 2:
 
-                                search_result_object_list[index].direct_download_url = DownloadSite.howfile(System.Convert.ToString(search_result_object_list[index].file_url[0][1]), ref search_result_object_list[index].howfile_cookies);
+                                search_result_object_list[index].direct_download_url = DownloadSite.howfile(System.Convert.ToString(search_result_object_list[index].file_url[0][1]), setting.howfile_server, ref search_result_object_list[index].howfile_cookies);
                                 break;
                             case 3:
                                 search_result_object_list[index].direct_download_url = DownloadSite.jbpan(System.Convert.ToString(search_result_object_list[index].file_url[0][1]));

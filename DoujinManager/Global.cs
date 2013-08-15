@@ -38,6 +38,7 @@ namespace DoujinManager
         public string pic_proxy = "127.0.0.1";
         public int pic_proxy_port = 8087;
         public string defaultFolder = @"D:\Doujin\";
+        public short howfile_server = 2;
 
     }
 

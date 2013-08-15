@@ -72,14 +72,14 @@ namespace DoujinManager
         /// <param name="target_url">需提取的url</param>
         /// <param name="cookies">howfile下载需要的验证cookie</param>
         /// <returns>下载地址</returns>
-        public static string howfile(string target_url,ref CookieCollection cookies)
+        public static string howfile(string target_url, short server, ref CookieCollection cookies)
         {
             string result = "";
             HttpWebResponse cookie_res = (HttpWebResponse)HttpWebResponseUtility.CreateGetHttpResponse(target_url, null, null, null, true);
             string html = DecompressWebResponse.Decompress(cookie_res, Encoding.UTF8);
             cookies = CookieUtility.getResponseCookies(cookie_res, "howfile.com");
             //MatchCollection sdfsdf = new Regex(@"(?<=<a href="")http://dl\d+.howfile.com.*?(?="")").Matches(html);
-            result = new Regex(@"(?<=<a href="")http://dl\d+.howfile.com.*?(?="")").Matches(html)[2].Value;
+            result = new Regex(@"(?<=<a href="")http://dl\d+.howfile.com.*?(?="")").Matches(html)[server].Value;
             Match match = new Regex(@"onclick='setCookie\(""(.*?)"", ""(.*?)"", 1\*60\*60\*1000\);setCookie\(""(.*?)"", ""(.*?)"", 1\*60\*60\*1000\);").Match(html);
             cookies.Add(new Cookie(match.Groups[1].Value, match.Groups[2].Value, "/", "howfile.com"));
             cookies.Add(new Cookie(match.Groups[3].Value, match.Groups[4].Value, "/", "howfile.com"));
