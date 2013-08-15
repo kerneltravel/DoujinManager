@@ -34,10 +34,10 @@ namespace DoujinManager
         public int proxy_port = 0;
         public int Thumbnail_Width = 187;
         public int Thumbnail_Height = 256;
-        public short use_pic_proxy = 2;
+        public short use_pic_proxy = 0;
         public string pic_proxy = "127.0.0.1";
         public int pic_proxy_port = 8087;
-        public string defaultFolder = "D:/Doujin/";
+        public string defaultFolder = @"D:\Doujin\";
 
     }
 
