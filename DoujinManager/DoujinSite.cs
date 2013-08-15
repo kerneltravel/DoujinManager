@@ -439,7 +439,7 @@ namespace DoujinManager
                 NameFormatter_ds(ref title, ref is_doujin, ref author);
                 if (author == null || author == "") { author = party; party = ""; }
             }
-            Match nameMatch = new Regex(@"^( *)[\w :"";',.~!@#$%/\\^&*_+|`=！…?—：“”：；‘’，。、-]+").Match(title);
+            Match nameMatch = new Regex(@"^( *)[\w :"";',.~!@#$%/\\^&*_+|`=！…?—：“”：；‘’，。、・-]+").Match(title);
             if (nameMatch.Success)
             {
                 name = brackets.Replace(nameMatch.Value, "");
