@@ -113,6 +113,8 @@
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(981, 597);
             this.tabControl.TabIndex = 0;
+            this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
+            this.tabControl.MouseMove += new System.Windows.Forms.MouseEventHandler(this.tabControl_MouseMove);
             // 
             // Online
             // 
@@ -324,6 +326,7 @@
             this.rb_s_pic_proxy_0.TabStop = true;
             this.rb_s_pic_proxy_0.Text = "不启用";
             this.rb_s_pic_proxy_0.UseVisualStyleBackColor = true;
+            this.rb_s_pic_proxy_0.Click += new System.EventHandler(this.rb_s_pic_proxy_0_Click);
             // 
             // rb_s_pic_proxy_1
             // 
@@ -335,6 +338,7 @@
             this.rb_s_pic_proxy_1.TabStop = true;
             this.rb_s_pic_proxy_1.Text = "使用IE设置";
             this.rb_s_pic_proxy_1.UseVisualStyleBackColor = true;
+            this.rb_s_pic_proxy_1.Click += new System.EventHandler(this.rb_s_pic_proxy_1_Click);
             // 
             // rb_s_pic_proxy_2
             // 
@@ -346,6 +350,7 @@
             this.rb_s_pic_proxy_2.TabStop = true;
             this.rb_s_pic_proxy_2.Text = "自定义代理";
             this.rb_s_pic_proxy_2.UseVisualStyleBackColor = true;
+            this.rb_s_pic_proxy_2.Click += new System.EventHandler(this.rb_s_pic_proxy_2_Click);
             // 
             // p_s_proxy
             // 
@@ -367,7 +372,7 @@
             this.rb_s_proxy_0.TabStop = true;
             this.rb_s_proxy_0.Text = "不启用";
             this.rb_s_proxy_0.UseVisualStyleBackColor = true;
-            this.rb_s_proxy_0.CheckedChanged += new System.EventHandler(this.rb_s_proxy_0_CheckedChanged);
+            this.rb_s_proxy_0.Click += new System.EventHandler(this.rb_s_proxy_0_Click);
             // 
             // rb_s_proxy_1
             // 
@@ -379,7 +384,7 @@
             this.rb_s_proxy_1.TabStop = true;
             this.rb_s_proxy_1.Text = "使用IE设置";
             this.rb_s_proxy_1.UseVisualStyleBackColor = true;
-            this.rb_s_proxy_1.CheckedChanged += new System.EventHandler(this.rb_s_proxy_1_CheckedChanged);
+            this.rb_s_proxy_1.Click += new System.EventHandler(this.rb_s_proxy_1_Click);
             // 
             // rb_s_proxy_2
             // 
@@ -391,7 +396,7 @@
             this.rb_s_proxy_2.TabStop = true;
             this.rb_s_proxy_2.Text = "自定义代理";
             this.rb_s_proxy_2.UseVisualStyleBackColor = true;
-            this.rb_s_proxy_2.CheckedChanged += new System.EventHandler(this.rb_s_proxy_2_CheckedChanged);
+            this.rb_s_proxy_2.Click += new System.EventHandler(this.rb_s_proxy_2_Click);
             // 
             // btn_s_defaultFolder
             // 
@@ -401,6 +406,7 @@
             this.btn_s_defaultFolder.TabIndex = 22;
             this.btn_s_defaultFolder.Text = "选择";
             this.btn_s_defaultFolder.UseVisualStyleBackColor = true;
+            this.btn_s_defaultFolder.Click += new System.EventHandler(this.btn_s_defaultFolder_Click);
             // 
             // tb_s_defaultFolder
             // 
@@ -408,7 +414,6 @@
             this.tb_s_defaultFolder.Name = "tb_s_defaultFolder";
             this.tb_s_defaultFolder.Size = new System.Drawing.Size(338, 25);
             this.tb_s_defaultFolder.TabIndex = 21;
-            this.tb_s_defaultFolder.TextChanged += new System.EventHandler(this.tb_s_defaultFolder_TextChanged);
             // 
             // label9
             // 
@@ -475,7 +480,6 @@
             this.tb_s_proxy_port.Name = "tb_s_proxy_port";
             this.tb_s_proxy_port.Size = new System.Drawing.Size(53, 25);
             this.tb_s_proxy_port.TabIndex = 10;
-            this.tb_s_proxy_port.TextChanged += new System.EventHandler(this.tb_s_proxy_port_TextChanged);
             // 
             // label4
             // 
@@ -492,7 +496,6 @@
             this.tb_s_proxy.Name = "tb_s_proxy";
             this.tb_s_proxy.Size = new System.Drawing.Size(100, 25);
             this.tb_s_proxy.TabIndex = 8;
-            this.tb_s_proxy.TextChanged += new System.EventHandler(this.tb_s_proxy_TextChanged);
             // 
             // label3
             // 
@@ -509,7 +512,6 @@
             this.tb_s_pic_load_timeout.Name = "tb_s_pic_load_timeout";
             this.tb_s_pic_load_timeout.Size = new System.Drawing.Size(63, 25);
             this.tb_s_pic_load_timeout.TabIndex = 3;
-            this.tb_s_pic_load_timeout.TextChanged += new System.EventHandler(this.tb_s_pic_load_timeout_TextChanged);
             // 
             // label2
             // 
@@ -526,7 +528,6 @@
             this.tb_s_pic_load_sametime.Name = "tb_s_pic_load_sametime";
             this.tb_s_pic_load_sametime.Size = new System.Drawing.Size(36, 25);
             this.tb_s_pic_load_sametime.TabIndex = 1;
-            this.tb_s_pic_load_sametime.TextChanged += new System.EventHandler(this.tb_s_pic_load_sametime_TextChanged);
             // 
             // label1
             // 
