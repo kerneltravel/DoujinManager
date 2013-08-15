@@ -51,30 +51,7 @@ namespace DoujinManager
             lv_o.LargeImageList = il_o;
         }
 
-        void refreshTimer_Tick(object sender, EventArgs e)
-        {
-            lv_d.BeginUpdate();
-            foreach (ListViewItem lvife in lv_d.Items)
-            {
-                long percentl = download_object_dict[Guid.Parse(lvife.SubItems[5].Text)].down_percent;
-                if (percentl != 0)
-                {
-                    ProgressBar pbo = lv_d.GetEmbeddedControl(2, lvife.Index) as ProgressBar;
-                    if (pbo.Maximum < System.Convert.ToInt32(percentl))
-                    {
-                        System.Random rand = new Random();
-                        rand.NextDouble();
-                        pbo.Maximum += System.Convert.ToInt32(percentl) + System.Convert.ToInt32(500000d * rand.NextDouble());
-                    }
-                    pbo.Value = System.Convert.ToInt32(percentl);
-                    float percent = System.Convert.ToSingle(percentl) / System.Convert.ToSingle(pbo.Maximum) * 100f;
-                    NumberFormatInfo nfi = CultureInfo.CurrentUICulture.NumberFormat;
-                    lvife.SubItems[1].Text = percent.ToString("N", nfi) + "%";
-                }
-            }
-            lv_d.EndUpdate();
-            Application.DoEvents();
-        }
+        #region Search
 
         private int read_DoujinSite(string string_doujinsite)
         {
@@ -193,7 +170,7 @@ namespace DoujinManager
                             {
                                 parcomp2 += 1;
                             }
-                            if (parcomp2 == parcomp1) { this.Cursor = Cursors.Default; }
+                            if (parcomp2 == parcomp1) { this.lv_o.Cursor = Cursors.Default; }
                         });
                     });
                 }
@@ -205,85 +182,6 @@ namespace DoujinManager
                     }
                 }
             }, read_DoujinSite(string_doujinsite));
-        }
-
-        private void download(Doujinshi djs)
-        {
-            Guid GUID = Guid.NewGuid();
-            this.Invoke((Action)delegate
-            {
-                ProgressBar pb = new ProgressBar();
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = djs.name;
-                lvi.SubItems.Add("正在连接");
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add(djs.download_url);
-                lvi.SubItems.Add(djs.direct_download_url);
-                lvi.SubItems.Add(GUID.ToString());
-                this.lv_d.Items.Add(lvi);
-                this.lv_d.AddEmbeddedControl(pb, 2, lv_d.Items.Count - 1);
-            });
-            if (download_object_dict.TryAdd(GUID, djs))
-            {
-                Task.Factory.StartNew((o) =>
-                {
-                    Guid guido = (Guid)o;
-                    Doujinshi djsd = null;
-                    if (download_object_dict.TryGetValue(guido, out djsd))
-                    {
-                        DownLoadFile dlfile = new DownLoadFile();
-                        dlfile.DownSuccessEventHandler += (sender, e) =>
-                        {
-                            if (System.Convert.ToBoolean(e.msg))
-                            {
-                                //MessageBox.Show("文件下载成功！");
-                                this.Invoke((Action)delegate
-                                {
-                                    foreach (ListViewItem lvife in lv_d.Items)
-                                    {
-                                        if (lvife.SubItems[5].Text == guido.ToString()) { lvife.Remove(); break; }
-                                    }
-                                    if (lv_d.Items.Count == 0) { refreshTimer.Stop(); }
-                                });
-                            }
-                            else
-                            {
-                                MessageBox.Show("文件下载失败！" + System.Environment.NewLine +
-                                                "文件名：" + djsd.name + System.Environment.NewLine +
-                                                "GUID：" + guido.ToString());
-                            }
-                        };
-                        dlfile.FileBytesEventHandler += (sender, e) => this.Invoke((Action)delegate
-                        {
-                            //MessageBox.Show("开始下载！");
-                            foreach (ListViewItem lvife in lv_d.Items)
-                            {
-                                if (lvife.SubItems[5].Text == guido.ToString())
-                                {
-                                    ProgressBar pbo = lv_d.GetEmbeddedControl(2, lvife.Index) as ProgressBar;
-                                    pbo.Maximum = System.Convert.ToInt32(e.msg);
-                                    break;
-                                }
-                            }
-                        });
-                        dlfile.PercentEventHandler += (sender, e) => download_object_dict[guido].down_percent = System.Convert.ToInt64(e.msg);
-                        if (!(Directory.Exists(setting.defaultFolder)))
-                        {
-                            try
-                            {
-                                Directory.CreateDirectory(setting.defaultFolder);
-                            }
-                            catch
-                            {
-                                MessageBox.Show("无法创建文件！下载失败！");
-                            }
-                        }
-                        string ext = "";
-                        dlfile.DownloadFile(setting.defaultFolder + "[" + djsd.author + "]" + djsd.name + "[" + djsd.localization_group + "]", djsd.direct_download_url, (String)djsd.file_url[0][1], null, ref ext, download_object_dict[guido].howfile_cookies);
-                        File.Move(setting.defaultFolder + "[" + djsd.author + "]" + djsd.name + "[" + djsd.localization_group + "]", setting.defaultFolder + "[" + djsd.author + "]" + djsd.name + "[" + djsd.localization_group + "]." + ext);
-                    }
-                }, GUID);
-            }
         }
 
         private void btn_o_search_Click(object sender, EventArgs e)
@@ -384,7 +282,7 @@ namespace DoujinManager
             string dsname = "";
             foreach (ListViewItem lvi in lv_o.SelectedItems)
             {
-                dsname += search_result_object_list[lvi.Index].name+System.Environment.NewLine;
+                dsname += search_result_object_list[lvi.Index].name + System.Environment.NewLine;
             }
             try
             {
@@ -429,7 +327,7 @@ namespace DoujinManager
                         download(search_result_object_list[index]);
                     }
                     catch (Exception ed) { MessageBox.Show(ed.Message); }
-                },indexd);
+                }, indexd);
             }
         }
 
@@ -443,8 +341,8 @@ namespace DoujinManager
             djs.direct_download_url = DownloadSite.howfile(System.Convert.ToString(djs.file_url[0][1]), ref djs.howfile_cookies);
             djs.name = "aaaaaaa";
             download(djs);*/
-            this.tt_o_lv_lvi.SetToolTip(this.lv_o,"aaaaa");
-            
+            this.tt_o_lv_lvi.SetToolTip(this.lv_o, "aaaaa");
+
         }
 
         private void tb_o_search_KeyDown(object sender, KeyEventArgs e)
@@ -464,12 +362,129 @@ namespace DoujinManager
                                           "作者：" + djs.author + System.Environment.NewLine +
                                           "首发展会：" + djs.party + System.Environment.NewLine +
                                           "汉化组：" + djs.localization_group + System.Environment.NewLine +
-                                          "标签：" + string.Join(",", djs.tag.ToArray()) + System.Environment.NewLine, this.lv_o, e.X, e.Y);
+                                          "标签：" + string.Join(",", djs.tag.ToArray()) + System.Environment.NewLine, this.lv_o, e.X, e.Y - 47);
                     tt_active = true;
                 }
             }
             else { this.tt_o_lv_lvi.RemoveAll(); tt_active = false; }
         }
+
+        private void tabControl_MouseMove(object sender, MouseEventArgs e)
+        {
+            this.tt_o_lv_lvi.RemoveAll(); tt_active = false;
+        }
+
+        #endregion
+
+        #region Download
+
+        void refreshTimer_Tick(object sender, EventArgs e)
+        {
+            lv_d.BeginUpdate();
+            foreach (ListViewItem lvife in lv_d.Items)
+            {
+                long percentl = download_object_dict[Guid.Parse(lvife.SubItems[5].Text)].down_percent;
+                if (percentl != 0)
+                {
+                    ProgressBar pbo = lv_d.GetEmbeddedControl(2, lvife.Index) as ProgressBar;
+                    if (pbo.Maximum < System.Convert.ToInt32(percentl))
+                    {
+                        System.Random rand = new Random();
+                        rand.NextDouble();
+                        pbo.Maximum += System.Convert.ToInt32(percentl) + System.Convert.ToInt32(500000d * rand.NextDouble());
+                    }
+                    pbo.Value = System.Convert.ToInt32(percentl);
+                    float percent = System.Convert.ToSingle(percentl) / System.Convert.ToSingle(pbo.Maximum) * 100f;
+                    NumberFormatInfo nfi = CultureInfo.CurrentUICulture.NumberFormat;
+                    lvife.SubItems[1].Text = percent.ToString("N", nfi) + "%";
+                }
+            }
+            lv_d.EndUpdate();
+            Application.DoEvents();
+        }
+
+        private void download(Doujinshi djs)
+        {
+            Guid GUID = Guid.NewGuid();
+            this.Invoke((Action)delegate
+            {
+                ProgressBar pb = new ProgressBar();
+                ListViewItem lvi = new ListViewItem();
+                lvi.Text = djs.name;
+                lvi.SubItems.Add("正在连接");
+                lvi.SubItems.Add("");
+                lvi.SubItems.Add(djs.download_url);
+                lvi.SubItems.Add(djs.direct_download_url);
+                lvi.SubItems.Add(GUID.ToString());
+                this.lv_d.Items.Add(lvi);
+                this.lv_d.AddEmbeddedControl(pb, 2, lv_d.Items.Count - 1);
+            });
+            if (download_object_dict.TryAdd(GUID, djs))
+            {
+                Task.Factory.StartNew((o) =>
+                {
+                    Guid guido = (Guid)o;
+                    Doujinshi djsd = null;
+                    if (download_object_dict.TryGetValue(guido, out djsd))
+                    {
+                        DownLoadFile dlfile = new DownLoadFile();
+                        dlfile.DownSuccessEventHandler += (sender, e) =>
+                        {
+                            if (System.Convert.ToBoolean(e.msg))
+                            {
+                                //MessageBox.Show("文件下载成功！");
+                                this.Invoke((Action)delegate
+                                {
+                                    foreach (ListViewItem lvife in lv_d.Items)
+                                    {
+                                        if (lvife.SubItems[5].Text == guido.ToString()) { lvife.Remove(); break; }
+                                    }
+                                    if (lv_d.Items.Count == 0) { refreshTimer.Stop(); }
+                                });
+                            }
+                            else
+                            {
+                                MessageBox.Show("文件下载失败！" + System.Environment.NewLine +
+                                                "文件名：" + djsd.name + System.Environment.NewLine +
+                                                "GUID：" + guido.ToString());
+                            }
+                        };
+                        dlfile.FileBytesEventHandler += (sender, e) => this.Invoke((Action)delegate
+                        {
+                            //MessageBox.Show("开始下载！");
+                            foreach (ListViewItem lvife in lv_d.Items)
+                            {
+                                if (lvife.SubItems[5].Text == guido.ToString())
+                                {
+                                    ProgressBar pbo = lv_d.GetEmbeddedControl(2, lvife.Index) as ProgressBar;
+                                    pbo.Maximum = System.Convert.ToInt32(e.msg);
+                                    break;
+                                }
+                            }
+                        });
+                        dlfile.PercentEventHandler += (sender, e) => download_object_dict[guido].down_percent = System.Convert.ToInt64(e.msg);
+                        if (!(Directory.Exists(setting.defaultFolder)))
+                        {
+                            try
+                            {
+                                Directory.CreateDirectory(setting.defaultFolder);
+                            }
+                            catch
+                            {
+                                MessageBox.Show("无法创建文件！下载失败！");
+                            }
+                        }
+                        string ext = "";
+                        dlfile.DownloadFile(setting.defaultFolder + "[" + djsd.author + "]" + djsd.name + "[" + djsd.localization_group + "]", djsd.direct_download_url, (String)djsd.file_url[0][1], null, ref ext, download_object_dict[guido].howfile_cookies);
+                        File.Move(setting.defaultFolder + "[" + djsd.author + "]" + djsd.name + "[" + djsd.localization_group + "]", setting.defaultFolder + "[" + djsd.author + "]" + djsd.name + "[" + djsd.localization_group + "]." + ext);
+                    }
+                }, GUID);
+            }
+        }
+
+        #endregion
+
+        #region Setting
 
         private void InitializeSetting()
         {
@@ -523,40 +538,58 @@ namespace DoujinManager
             }
         }
 
-        private void tb_s_pic_load_sametime_TextChanged(object sender, EventArgs e)
+        private void rb_s_proxy_0_Click(object sender, EventArgs e)
+        {
+            tb_s_proxy.Enabled = false;
+            tb_s_proxy_port.Enabled = false;
+        }
+
+        private void rb_s_proxy_1_Click(object sender, EventArgs e)
+        {
+            tb_s_proxy.Enabled = false;
+            tb_s_proxy_port.Enabled = false;
+        }
+
+        private void rb_s_proxy_2_Click(object sender, EventArgs e)
+        {
+            tb_s_proxy.Enabled = true;
+            tb_s_proxy_port.Enabled = true;
+        }
+
+        private void rb_s_pic_proxy_0_Click(object sender, EventArgs e)
+        {
+            tb_s_pic_proxy.Enabled = false;
+            tb_s_pic_proxy_port.Enabled = false;
+        }
+
+        private void rb_s_pic_proxy_1_Click(object sender, EventArgs e)
+        {
+            tb_s_pic_proxy.Enabled = false;
+            tb_s_pic_proxy_port.Enabled = false;
+        }
+
+        private void rb_s_pic_proxy_2_Click(object sender, EventArgs e)
+        {
+            tb_s_pic_proxy.Enabled = true;
+            tb_s_pic_proxy_port.Enabled = true;
+        }
+
+        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             setting.pic_load_sametime = System.Convert.ToInt32(tb_s_pic_load_sametime.Text);
-            Universe.SaveSettings(setting, "Configuration/settings.xml");
-        }
-
-        private void tb_s_pic_load_timeout_TextChanged(object sender, EventArgs e)
-        {
             setting.pic_load_timeout = System.Convert.ToInt32(tb_s_pic_load_timeout.Text);
-            Universe.SaveSettings(setting, "Configuration/settings.xml");
-        }
-
-        private void rb_s_proxy_0_CheckedChanged(object sender, EventArgs e)
-        {
             if (rb_s_proxy_0.Checked)
             {
                 tb_s_proxy.Enabled = false;
                 tb_s_proxy_port.Enabled = false;
                 setting.use_proxy = 0;
-                Universe.SaveSettings(setting, "Configuration/settings.xml");
             }
-        }
-        private void rb_s_proxy_1_CheckedChanged(object sender, EventArgs e)
-        {
             if (rb_s_proxy_1.Checked)
             {
                 tb_s_proxy.Enabled = false;
                 tb_s_proxy_port.Enabled = false;
                 setting.use_proxy = 1;
-                Universe.SaveSettings(setting, "Configuration/settings.xml");
             }
-        }
-        private void rb_s_proxy_2_CheckedChanged(object sender, EventArgs e)
-        {
             if (rb_s_proxy_2.Checked)
             {
                 tb_s_proxy.Enabled = true;
@@ -564,120 +597,53 @@ namespace DoujinManager
                 setting.use_proxy = 2;
                 setting.proxy = tb_s_proxy.Text;
                 setting.proxy_port = System.Convert.ToInt32(tb_s_proxy_port.Text);
-                Universe.SaveSettings(setting, "Configuration/settings.xml");
             }
-        }
-
-        private void tb_s_proxy_TextChanged(object sender, EventArgs e)
-        {
-            setting.proxy = tb_s_proxy.Text;
-            Universe.SaveSettings(setting, "Configuration/settings.xml");
-        }
-
-        private void tb_s_proxy_port_TextChanged(object sender, EventArgs e)
-        {
-            setting.proxy_port = System.Convert.ToInt32(tb_s_proxy_port.Text);
-            Universe.SaveSettings(setting, "Configuration/settings.xml");
-        }
-
-        private void rb_s_pic_proxy_0_CheckedChanged(object sender, EventArgs e)
-        {
             if (rb_s_pic_proxy_0.Checked)
             {
                 tb_s_pic_proxy.Enabled = false;
                 tb_s_pic_proxy_port.Enabled = false;
                 setting.use_pic_proxy = 0;
-                Universe.SaveSettings(setting, "Configuration/settings.xml");
             }
-        }
-        private void rb_s_pic_proxy_1_CheckedChanged(object sender, EventArgs e)
-        {
             if (rb_s_pic_proxy_1.Checked)
             {
                 tb_s_pic_proxy.Enabled = false;
                 tb_s_pic_proxy_port.Enabled = false;
                 setting.use_pic_proxy = 1;
-                Universe.SaveSettings(setting, "Configuration/settings.xml");
             }
-        }
-        private void rb_s_pic_proxy_2_CheckedChanged(object sender, EventArgs e)
-        {
             if (rb_s_pic_proxy_2.Checked)
             {
                 tb_s_pic_proxy.Enabled = true;
                 tb_s_pic_proxy_port.Enabled = true;
                 setting.use_pic_proxy = 2;
-                setting.proxy = tb_s_pic_proxy.Text;
-                setting.proxy_port = System.Convert.ToInt32(tb_s_pic_proxy_port.Text);
-                Universe.SaveSettings(setting, "Configuration/settings.xml");
+                setting.pic_proxy = tb_s_pic_proxy.Text;
+                setting.pic_proxy_port = System.Convert.ToInt32(tb_s_pic_proxy_port.Text);
             }
-        }
-
-        private void tb_s_pic_proxy_TextChanged(object sender, EventArgs e)
-        {
-            setting.proxy = tb_s_pic_proxy.Text;
-            Universe.SaveSettings(setting, "Configuration/settings.xml");
-        }
-
-        private void tb_s_pic_proxy_port_TextChanged(object sender, EventArgs e)
-        {
-            setting.proxy_port = System.Convert.ToInt32(tb_s_pic_proxy_port.Text);
-            Universe.SaveSettings(setting, "Configuration/settings.xml");
-        }
-
-        private void tb_s_defaultFolder_TextChanged(object sender, EventArgs e)
-        {
             string temp = tb_s_defaultFolder.Text;
             string lastchar = temp.Substring(temp.Length - 1, 1);
-            if (lastchar != "/") { temp += "/"; }
+            if (lastchar != System.Convert.ToString(Path.DirectorySeparatorChar)) { temp += Path.DirectorySeparatorChar; }
             setting.defaultFolder = temp;
             Universe.SaveSettings(setting, "Configuration/settings.xml");
         }
 
-        /*private void button2_Click(object sender, EventArgs e)
+        private void btn_s_defaultFolder_Click(object sender, EventArgs e)
         {
-            HttpWebResponse res = soulplus.Login("arition", "Lyqyrxw23");
-            soulplus.cookie = res.Cookies;
-            CookieUtility.SaveCookie(soulplus.cookie, "xml2.xml");
-            //WebRequest.DefaultWebProxy = new WebProxy("127.0.0.1", 8888);
-            DoujinSite hentai = new DoujinSite(Global.urls.soulplus);
-            HttpWebResponse res = hentai.Login("arition", "Lyqyrxw23");
-            hentai.cookie = res.Cookies;
-            hentai.url = Global.urls.hentai;
-            HttpWebResponse res2 = hentai.Login("arition", "Lyqyrxw23");
-            hentai.cookie.Add(res2.Cookies);
-            CookieUtility.savecookie(hentai.cookie, "xml.xml");
-            //CookieCollection cookies = hentai.cookie;
-            hentai.cookie = CookieUtility.ReadCookie("xml.xml");
-            /*foreach (Cookie coo in cookies)
+            OpenFileDialog ofd_s_defaultFolder = new OpenFileDialog();
+            ofd_s_defaultFolder.FileName = "　";
+            ofd_s_defaultFolder.Filter = "文件夹|*.neverseenthisfile";
+            ofd_s_defaultFolder.CheckPathExists = true;
+            ofd_s_defaultFolder.ShowReadOnly = false;
+            ofd_s_defaultFolder.ReadOnlyChecked = true;
+            ofd_s_defaultFolder.CheckFileExists = false;
+            ofd_s_defaultFolder.ValidateNames = false;
+            ofd_s_defaultFolder.InitialDirectory = tb_s_defaultFolder.Text;
+            if (ofd_s_defaultFolder.ShowDialog() == DialogResult.OK)
             {
-                richTextBox1.Text += "name:" + coo.Name + "  value:" + coo.Value + "  path:" + coo.Path + "  domain:" + coo.Domain + System.Environment.NewLine;
+                if (Path.DirectorySeparatorChar == '\\') { tb_s_defaultFolder.Text = new Regex(@".*\\").Match(ofd_s_defaultFolder.FileName).Value; }
+                else { tb_s_defaultFolder.Text = new Regex(@".*" + Path.DirectorySeparatorChar).Match(ofd_s_defaultFolder.FileName).Value; }
+            }
+        }
 
-            }
-            richTextBox1.Text += DecompressWebResponse.Decompress(res, Encoding.UTF8);
-            //Thread.Sleep(10000);
-            foreach (string[] rs in hentai.Search("百合"))
-            {
-                richTextBox1.Text += rs[0] + "    " + rs[1] + System.Environment.NewLine;
-            }
-            string viewurl = "http://bbs.soul-plus.net/read.php?tid=51121";
-            List<ArrayList> dict = hentai.GetDownLink(viewurl);
-            foreach (ArrayList item in dict)
-            {
-                richTextBox1.Text += System.Enum.GetName(typeof(Global.downmethod), item[0]) + "    " + item[1] + System.Environment.NewLine;
-                switch ((int)item[0])
-                {
-                    case 3:
-                        richTextBox1.Text += DownloadSite.jbpan((string)item[1]) + System.Environment.NewLine;
-                        break;
-                    case 4:
-                        richTextBox1.Text += DownloadSite.baidupan((string)item[1], hentai.GetPassword(viewurl)) + System.Environment.NewLine;
-                        break;
-                }
-            }
-            //richTextBox1.Text = hentai.Extract_pic("http://exhentai.org/g/198166/75f7b265d3/");
-        }*/
-
+        #endregion
 
     }
 }
