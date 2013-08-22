@@ -49,6 +49,7 @@ namespace DoujinManager
             refreshTimer.Tick += refreshTimer_Tick;
             refreshTimer.Enabled = true;
             lv_o.LargeImageList = il_o;
+            
         }
 
         #region Search
@@ -70,6 +71,12 @@ namespace DoujinManager
 
         private void search(string string_doujinsite)
         {
+            if (File.Exists(@"Configuration\cookie.xml"))
+            {
+                Loginwindow lw = new Loginwindow();
+                lw.Visible = false;
+                //ShowDialog(lw);
+            }
             Task.Factory.StartNew((o) =>
             {
                 this.Invoke((Action)delegate { this.lv_o.Cursor = Cursors.AppStarting; });
@@ -475,8 +482,9 @@ namespace DoujinManager
                             }
                         }
                         string ext = "";
-                        dlfile.DownloadFile(setting.defaultFolder + "[" + djsd.author + "]" + djsd.name + "[" + djsd.localization_group + "]", djsd.direct_download_url, (String)djsd.file_url[0][1], null, ref ext, download_object_dict[guido].howfile_cookies);
-                        File.Move(setting.defaultFolder + "[" + djsd.author + "]" + djsd.name + "[" + djsd.localization_group + "]", setting.defaultFolder + "[" + djsd.author + "]" + djsd.name + "[" + djsd.localization_group + "]." + ext);
+                        string filename = setting.defaultFolder + new Regex(@"[<>/\|:""*?]").Replace("[" + djsd.author + "]" + djsd.name + "[" + djsd.localization_group + "]", "_");
+                        dlfile.DownloadFile(filename, djsd.direct_download_url, (String)djsd.file_url[0][1], null, ref ext, download_object_dict[guido].howfile_cookies);
+                        File.Move(filename, filename + "." + ext);
                     }
                 }, GUID);
             }
