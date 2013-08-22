@@ -44,6 +44,13 @@
             this.btn_o_ppage = new System.Windows.Forms.Button();
             this.Local = new System.Windows.Forms.TabPage();
             this.Download = new System.Windows.Forms.TabPage();
+            this.lv_d = new ListViewEmbeddedControls.ListViewEx();
+            this.lv_d_ch_name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lv_d_ch_percent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lv_d_ch_ProgressBar = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lv_d_ch_downloadurl = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lv_d_ch_realurl = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lv_d_ch_GUID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Setting = new System.Windows.Forms.TabPage();
             this.p_s_pic_proxy = new System.Windows.Forms.Panel();
             this.rb_s_pic_proxy_0 = new System.Windows.Forms.RadioButton();
@@ -77,13 +84,6 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmi_Download = new System.Windows.Forms.ToolStripMenuItem();
             this.tt_o_lv_lvi = new System.Windows.Forms.ToolTip(this.components);
-            this.lv_d = new ListViewEmbeddedControls.ListViewEx();
-            this.lv_d_ch_name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lv_d_ch_percent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lv_d_ch_ProgressBar = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lv_d_ch_downloadurl = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lv_d_ch_realurl = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lv_d_ch_GUID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabControl.SuspendLayout();
             this.Online.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -276,6 +276,56 @@
             this.Download.TabIndex = 1;
             this.Download.Text = "下载";
             this.Download.UseVisualStyleBackColor = true;
+            // 
+            // lv_d
+            // 
+            this.lv_d.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lv_d_ch_name,
+            this.lv_d_ch_percent,
+            this.lv_d_ch_ProgressBar,
+            this.lv_d_ch_downloadurl,
+            this.lv_d_ch_realurl,
+            this.lv_d_ch_GUID});
+            this.lv_d.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lv_d.FullRowSelect = true;
+            this.lv_d.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lv_d.Location = new System.Drawing.Point(3, 3);
+            this.lv_d.MultiSelect = false;
+            this.lv_d.Name = "lv_d";
+            this.lv_d.Size = new System.Drawing.Size(967, 562);
+            this.lv_d.TabIndex = 1;
+            this.lv_d.UseCompatibleStateImageBehavior = false;
+            this.lv_d.View = System.Windows.Forms.View.Details;
+            // 
+            // lv_d_ch_name
+            // 
+            this.lv_d_ch_name.Text = "名称";
+            this.lv_d_ch_name.Width = 315;
+            // 
+            // lv_d_ch_percent
+            // 
+            this.lv_d_ch_percent.Text = "%";
+            this.lv_d_ch_percent.Width = 77;
+            // 
+            // lv_d_ch_ProgressBar
+            // 
+            this.lv_d_ch_ProgressBar.Text = "下载进度";
+            this.lv_d_ch_ProgressBar.Width = 136;
+            // 
+            // lv_d_ch_downloadurl
+            // 
+            this.lv_d_ch_downloadurl.Text = "引用地址";
+            this.lv_d_ch_downloadurl.Width = 77;
+            // 
+            // lv_d_ch_realurl
+            // 
+            this.lv_d_ch_realurl.Text = "下载地址";
+            this.lv_d_ch_realurl.Width = 76;
+            // 
+            // lv_d_ch_GUID
+            // 
+            this.lv_d_ch_GUID.Text = "GUID";
+            this.lv_d_ch_GUID.Width = 55;
             // 
             // Setting
             // 
@@ -587,56 +637,6 @@
             this.tt_o_lv_lvi.AutoPopDelay = 5000;
             this.tt_o_lv_lvi.InitialDelay = 500;
             this.tt_o_lv_lvi.ReshowDelay = 100;
-            // 
-            // lv_d
-            // 
-            this.lv_d.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.lv_d_ch_name,
-            this.lv_d_ch_percent,
-            this.lv_d_ch_ProgressBar,
-            this.lv_d_ch_downloadurl,
-            this.lv_d_ch_realurl,
-            this.lv_d_ch_GUID});
-            this.lv_d.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lv_d.FullRowSelect = true;
-            this.lv_d.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lv_d.Location = new System.Drawing.Point(3, 3);
-            this.lv_d.MultiSelect = false;
-            this.lv_d.Name = "lv_d";
-            this.lv_d.Size = new System.Drawing.Size(967, 562);
-            this.lv_d.TabIndex = 1;
-            this.lv_d.UseCompatibleStateImageBehavior = false;
-            this.lv_d.View = System.Windows.Forms.View.Details;
-            // 
-            // lv_d_ch_name
-            // 
-            this.lv_d_ch_name.Text = "名称";
-            this.lv_d_ch_name.Width = 315;
-            // 
-            // lv_d_ch_percent
-            // 
-            this.lv_d_ch_percent.Text = "%";
-            this.lv_d_ch_percent.Width = 77;
-            // 
-            // lv_d_ch_ProgressBar
-            // 
-            this.lv_d_ch_ProgressBar.Text = "下载进度";
-            this.lv_d_ch_ProgressBar.Width = 136;
-            // 
-            // lv_d_ch_downloadurl
-            // 
-            this.lv_d_ch_downloadurl.Text = "引用地址";
-            this.lv_d_ch_downloadurl.Width = 77;
-            // 
-            // lv_d_ch_realurl
-            // 
-            this.lv_d_ch_realurl.Text = "下载地址";
-            this.lv_d_ch_realurl.Width = 76;
-            // 
-            // lv_d_ch_GUID
-            // 
-            this.lv_d_ch_GUID.Text = "GUID";
-            this.lv_d_ch_GUID.Width = 55;
             // 
             // MainWindow
             // 
