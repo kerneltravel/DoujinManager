@@ -381,7 +381,7 @@ namespace DoujinManager
                         webcontent_cache[target_url] = html;
                         html = html.Replace("&amp;", "&").Replace("&#46;", ".");
                     }
-                    Regex ra = new Regex("(?<=(密[码碼]|pw|passwd|password|提取[码碼]|提取)(:|：| +?)).*?(?= *?<)");
+                    Regex ra = new Regex(@"(?<=(密[码碼]|pw|passwd|password|提取[码碼]|提取)(|<(|/)\w+>)(:|：| +?)).*?(?=[  ]*?<)");
                     if (ra.IsMatch(html))
                     {
                         result = ra.Match(html).Value;
@@ -409,11 +409,11 @@ namespace DoujinManager
             bool is_doujin = false;
             Regex brackets = new Regex(@"^ *?[(\[【]|[)\]】] *?$");
             Regex space = new Regex(@"^( *)");
-            title = title.Replace("&nbsp;", " ").Replace("&amp;", "&").Replace("&#46;", ".").Replace("(同人誌)", "");
+            title = title.Replace("&nbsp;", " ").Replace("&amp;", "&").Replace("&#46;", ".").Replace("(同人誌)", "").Replace("(自扫)", "").Replace("[自扫]", "");
             MatchCollection lgMatches = new Regex(@"( *)(\[.+?\]|【.+?】)").Matches(title);
             foreach (Match lgMatch in lgMatches)
             {
-                if (new Regex("[汉漢]化|CE").IsMatch(lgMatch.Value))
+                if (new Regex("[汉漢]化|CE|中文").IsMatch(lgMatch.Value))
                 {
                     localization_group = brackets.Replace(lgMatch.Value, "");
                     title = title.Replace(lgMatch.Value, "");
