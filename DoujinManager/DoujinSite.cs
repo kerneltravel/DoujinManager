@@ -407,10 +407,10 @@ namespace DoujinManager
         public Boolean NameFormatter(string title, ref string name, ref string author, ref string party, ref string localization_group, ref List<String> tag)
         {
             bool is_doujin = false;
-            Regex brackets = new Regex(@"^ *?[(\[【]|[)\]】] *?$");
-            Regex space = new Regex(@"^( *)");
+            Regex brackets = new Regex(@"^[  ]*?[(\[【]|[)\]】] *?$");
+            Regex space = new Regex(@"^([  ]*)");
             title = title.Replace("&nbsp;", " ").Replace("&amp;", "&").Replace("&#46;", ".").Replace("(同人誌)", "").Replace("(自扫)", "").Replace("[自扫]", "");
-            MatchCollection lgMatches = new Regex(@"( *)(\[.+?\]|【.+?】)").Matches(title);
+            MatchCollection lgMatches = new Regex(@"([  ]*)(\[.+?\]|【.+?】|\(.+?\))").Matches(title);
             foreach (Match lgMatch in lgMatches)
             {
                 if (new Regex("[汉漢]化|CE|中文").IsMatch(lgMatch.Value))
@@ -421,7 +421,7 @@ namespace DoujinManager
                     is_doujin = true;
                 }
             }
-            Match partyMatch = new Regex(@"^( *)\(.+?\)").Match(title);
+            Match partyMatch = new Regex(@"^([  ]*)\(.+?\)").Match(title);
             if (partyMatch.Success)
             {
                 party = brackets.Replace(partyMatch.Value, "");
@@ -429,7 +429,7 @@ namespace DoujinManager
                 party = space.Replace(party, "");
                 is_doujin = true;
             }
-            Match authorMatch = new Regex(@"^( *)(\[.+?\]|\(.+?\))").Match(title);
+            Match authorMatch = new Regex(@"^([  ]*)(\[.+?\]|\(.+?\))").Match(title);
             if (authorMatch.Success)
             {
                 author = brackets.Replace(authorMatch.Value, "");
@@ -439,13 +439,13 @@ namespace DoujinManager
                 NameFormatter_ds(ref title, ref is_doujin, ref author);
                 if (author == null || author == "") { author = party; party = ""; }
             }
-            Match nameMatch = new Regex(@"^( *)[\w :"";',.~!@#$%/\\^&*_+|`=！…?—：“”：；‘’，。、・-]+").Match(title);
+            Match nameMatch = new Regex(@"^([  ]*)[\w :"";☆※★▽◇□♡❤×○△～',.~!@#$%/\\^&*_+|`=！…?—：“”：；‘’，。、・-]+").Match(title);
             if (nameMatch.Success)
             {
                 name = brackets.Replace(nameMatch.Value, "");
                 title = title.Replace(nameMatch.Value, "");
                 name = space.Replace(name, "");
-                name = new Regex(@" +$").Replace(name, "");
+                name = new Regex(@"[  ]+$").Replace(name, "");
             }
             MatchCollection tagMatches = new Regex(@"\[.+?\]|【.+?】|\(.+?\)").Matches(title);
             foreach (Match tagMatch in tagMatches) { tag.Add(brackets.Replace(tagMatch.Value, "")); }
@@ -455,8 +455,8 @@ namespace DoujinManager
 
         private void NameFormatter_ds(ref string title, ref Boolean is_doujin, ref string author)
         {
-            Regex space = new Regex(@"^( *)");
-            Match authorMatch = new Regex(@"^( *)(\[.+?\]|\(.+?\))").Match(title);
+            Regex space = new Regex(@"^([  ]*)");
+            Match authorMatch = new Regex(@"^([  ]*)(\[.+?\]|\(.+?\))").Match(title);
             if (authorMatch.Success)
             {
                 author = author + authorMatch.Value;
