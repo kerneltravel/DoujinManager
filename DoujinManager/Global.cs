@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Xml.Serialization;
 namespace DoujinManager
 {
@@ -27,18 +28,20 @@ namespace DoujinManager
     [Serializable]
     public class Settings
     {
-        public int pic_load_sametime = 6;
-        public int pic_load_timeout = 15000;
-        public short use_proxy = 0;
-        public string proxy = "";
-        public int proxy_port = 0;
-        public int Thumbnail_Width = 187;
-        public int Thumbnail_Height = 256;
-        public short use_pic_proxy = 0;
-        public string pic_proxy = "127.0.0.1";
-        public int pic_proxy_port = 8087;
-        public string defaultFolder = @"D:\Doujin\";
-        public short howfile_server = 2;
+        public Int32 pic_load_sametime = 6;
+        public Int32 pic_load_timeout = 15000;
+        public Int16 use_proxy = 0;
+        public String proxy = "";
+        public Int32 proxy_port = 0;
+        public Int32 Thumbnail_Width = 187;
+        public Int32 Thumbnail_Height = 256;
+        public Int16 use_pic_proxy = 0;
+        public String pic_proxy = "127.0.0.1";
+        public Int32 pic_proxy_port = 8087;
+        public String defaultFolder = @"D:\Doujin\";
+        public Int16 howfile_server = 2;
+        public Boolean soulplus_enabled = false;
+        public Boolean hentai_enabled = false;
 
     }
 

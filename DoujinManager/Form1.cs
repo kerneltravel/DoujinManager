@@ -35,6 +35,18 @@ namespace DoujinManager
         {
             InitializeComponent();
             InitializeSetting();
+            if (!File.Exists("Configuration/cookie.xml"))
+            {
+                Loginwindow lw = new Loginwindow();
+                lw.SendSettings += (sender, e) =>
+                {
+                    setting.soulplus_enabled = e.soulplus_enabled;
+                    setting.hentai_enabled = e.hentai_enabled;
+                };
+                lw.ShowDialog();
+            }
+            if (setting.soulplus_enabled) { cb_o_siteselect.Items.Add("soul-plus.net"); cb_o_siteselect.Text = "soul-plus.net"; }
+            if (setting.hentai_enabled) { cb_o_siteselect.Items.Add("E-hentai.org"); }
             //Universe.SaveSettings(setting, "Configuration/settings.xml");
             if (setting.use_proxy == 0) { WebRequest.DefaultWebProxy = null; }
             if (setting.use_proxy == 2) { WebRequest.DefaultWebProxy = new WebProxy(setting.proxy, setting.proxy_port); }
@@ -49,7 +61,6 @@ namespace DoujinManager
             refreshTimer.Tick += refreshTimer_Tick;
             refreshTimer.Enabled = true;
             lv_o.LargeImageList = il_o;
-            
         }
 
         #region Search
@@ -71,12 +82,6 @@ namespace DoujinManager
 
         private void search(string string_doujinsite)
         {
-            if (File.Exists(@"Configuration\cookie.xml"))
-            {
-                Loginwindow lw = new Loginwindow();
-                lw.Visible = false;
-                //ShowDialog(lw);
-            }
             Task.Factory.StartNew((o) =>
             {
                 this.Invoke((Action)delegate { this.lv_o.Cursor = Cursors.AppStarting; });
@@ -348,7 +353,7 @@ namespace DoujinManager
             djs.direct_download_url = DownloadSite.howfile(System.Convert.ToString(djs.file_url[0][1]), ref djs.howfile_cookies);
             djs.name = "aaaaaaa";
             download(djs);*/
-            this.tt_o_lv_lvi.SetToolTip(this.lv_o, "aaaaa");
+            //this.tt_o_lv_lvi.SetToolTip(this.lv_o, "aaaaa");
 
         }
 
@@ -630,6 +635,10 @@ namespace DoujinManager
             string lastchar = temp.Substring(temp.Length - 1, 1);
             if (lastchar != System.Convert.ToString(Path.DirectorySeparatorChar)) { temp += Path.DirectorySeparatorChar; }
             setting.defaultFolder = temp;
+            if (!Directory.Exists("Configuration"))
+            {
+                Directory.CreateDirectory("Configuration");
+            }
             Universe.SaveSettings(setting, "Configuration/settings.xml");
         }
 

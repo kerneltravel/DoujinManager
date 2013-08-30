@@ -91,8 +91,9 @@ namespace DoujinManager
         /// </summary>
         /// <param name="username">用户名</param>
         /// <param name="password">密码</param>
+        /// /// <param name="password">登录网站枚举</param>
         /// <returns>请求返回的HttpWebResponse</returns>
-        public HttpWebResponse Login(string username, string password)
+        public static HttpWebResponse Login(string username, string password, Global.urls url)
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>();
             string loginurl = null;
@@ -119,7 +120,7 @@ namespace DoujinManager
                     break;
                 case 2:
                     url = Global.urls.hentai;
-                    return this.Login(username, password);
+                    return Login(username, password, Global.urls.hentai);
                     break;
             }
             return result;

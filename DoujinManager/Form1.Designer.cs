@@ -164,14 +164,10 @@
             // cb_o_siteselect
             // 
             this.cb_o_siteselect.FormattingEnabled = true;
-            this.cb_o_siteselect.Items.AddRange(new object[] {
-            "soul-plus.net",
-            "E-hentai.org"});
             this.cb_o_siteselect.Location = new System.Drawing.Point(373, 6);
             this.cb_o_siteselect.Name = "cb_o_siteselect";
             this.cb_o_siteselect.Size = new System.Drawing.Size(169, 23);
             this.cb_o_siteselect.TabIndex = 4;
-            this.cb_o_siteselect.Text = "soul-plus.net";
             // 
             // lb_o_search
             // 
