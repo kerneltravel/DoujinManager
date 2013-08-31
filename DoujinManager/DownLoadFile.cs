@@ -80,7 +80,7 @@ namespace DoujinManager
                 }
                 //向服务器请求，获得服务器的回应数据流
                 HttpWebResponse webResponse = (HttpWebResponse)myRequest.GetResponse();
-                MatchCollection mcext = new Regex(@"(?<==.*\.)\w+").Matches(webResponse.Headers.Get("Content-Disposition"));
+                MatchCollection mcext = Regex.Matches(webResponse.Headers.Get("Content-Disposition"), @"(?<==.*\.)\w+");
                 ext = mcext[mcext.Count - 1].Value;
                 //ext = webResponse.Headers.Get("Content-Disposition").Split('=')[1].Split('.')[1];
                 FileBytesEventHandler(this, new DownLoadFileEventArgs(webResponse.ContentLength + sPosstion));
