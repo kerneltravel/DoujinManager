@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
+using System.IO;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net;
-using System.IO;
 
 namespace DoujinManager
 {
@@ -50,37 +46,43 @@ namespace DoujinManager
         {
             btn_login.Enabled = false;
             btn_login.Text = "登录中……";
-            HttpWebResponse hwr_sp = DoujinSite.Login(tb_soulplus_username.Text, tb_soulplus_password.Text, Global.urls.soulplus);
-            HttpWebResponse hwr_ht = DoujinSite.Login(tb_hentai_username.Text, tb_hentai_password.Text, Global.urls.hentai);
-            if (Regex.IsMatch(DecompressWebResponse.Decompress(hwr_sp, Encoding.UTF8), "您已经顺利登录"))
+            Task.Factory.StartNew(() =>
             {
-                sp_enabled = true;
-                cc.Add(hwr_sp.Cookies);
-                islogin = true;
-            }
-            if (Regex.IsMatch(DecompressWebResponse.Decompress(hwr_ht, Encoding.UTF8), "ExHentai.org - The X Makes It Sound Cool"))
-            {
-                ht_enabled = true;
-                cc.Add(hwr_ht.Cookies);
-                islogin = true;
-            }
-            islogin = true;
-            if (islogin)
-            {
-                if (!Directory.Exists("Configuration"))
+                HttpWebResponse hwr_sp = DoujinSite.Login(tb_soulplus_username.Text, tb_soulplus_password.Text, Global.urls.soulplus);
+                HttpWebResponse hwr_ht = DoujinSite.Login(tb_hentai_username.Text, tb_hentai_password.Text, Global.urls.hentai);
+                if (Regex.IsMatch(DecompressWebResponse.Decompress(hwr_sp, Encoding.UTF8), "您已经顺利登录"))
                 {
-                    Directory.CreateDirectory("Configuration");
+                    sp_enabled = true;
+                    cc.Add(hwr_sp.Cookies);
+                    islogin = true;
                 }
-                CookieUtility.SaveCookie(cc, "Configuration/cookie.xml");
-                SendSettings(this, new LoginWindowEventArgs(sp_enabled, ht_enabled));
-                this.Close();
-            }
-            else
-            {
-                MessageBox.Show("登录失败！");
-                btn_login.Enabled = true;
-                btn_login.Text = "登录";
-            }
+                if (Regex.IsMatch(DecompressWebResponse.Decompress(hwr_ht, Encoding.UTF8), "ExHentai.org - The X Makes It Sound Cool"))
+                {
+                    ht_enabled = true;
+                    cc.Add(hwr_ht.Cookies);
+                    islogin = true;
+                }
+                islogin = true;
+                if (islogin)
+                {
+                    if (!Directory.Exists("Configuration"))
+                    {
+                        Directory.CreateDirectory("Configuration");
+                    }
+                    CookieUtility.SaveCookie(cc, "Configuration/cookie.xml");
+                    SendSettings(this, new LoginWindowEventArgs(sp_enabled, ht_enabled));
+                    this.Invoke((Action)delegate { this.Close(); });
+                }
+                else
+                {
+                    MessageBox.Show("登录失败！");
+                    this.Invoke((Action)delegate
+                    {
+                        btn_login.Enabled = true;
+                        btn_login.Text = "登录";
+                    });
+                }
+            });
         }
 
         private void Loginwindow_FormClosing(object sender, FormClosingEventArgs e)
