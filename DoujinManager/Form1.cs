@@ -43,6 +43,7 @@ namespace DoujinManager
                 {
                     setting.soulplus_enabled = e.soulplus_enabled;
                     setting.hentai_enabled = e.hentai_enabled;
+                    Universe.SaveSettings(setting, "Configuration/settings.xml");
                 };
                 lw.ShowDialog();
             }
