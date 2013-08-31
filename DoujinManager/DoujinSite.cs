@@ -147,7 +147,7 @@ namespace DoujinManager
                     if (page == 1)
                     {
                         parameters.Add("step", "2");
-                        Match f = new Regex("(?<=<--).+(?=-->)").Match(keyword);
+                        Match f = Regex.Match(keyword, "(?<=<--).+(?=-->)");
                         if (f.Success)
                         {
                             string fid = null;
@@ -181,12 +181,12 @@ namespace DoujinManager
                         parameters.Add("asc", "DESC");
                         searchurl = "http://bbs.soul-plus.net/search.php";
                         html = DecompressWebResponse.Decompress(HttpWebResponseUtility.CreatePostHttpResponse(searchurl, parameters, null, null, Encoding.UTF8, cookie, true), Encoding.UTF8);
-                        if (new Regex(@"<li class=""pagesone"">").IsMatch(html))
+                        if (Regex.IsMatch(html, @"<li class=""pagesone"">"))
                         {
-                            Match match_page = new Regex(@"Pages: (\d+)\/(\d+)").Match(html);
+                            Match match_page = Regex.Match(html, @"Pages: (?:\d+)\/(?:\d+)");
                             search_currect_page = System.Convert.ToInt32(match_page.Groups[1].Value);
                             search_all_page = System.Convert.ToInt32(match_page.Groups[2].Value);
-                            search_page_url = "http://bbs.soul-plus.net/" + new Regex(@"search.php\?step=2&keyword=.+?&sid=\d+?&seekfid=.+?&page=").Match(html).Value;
+                            search_page_url = "http://bbs.soul-plus.net/" + Regex.Match(html, @"search.php\?step=2&keyword=.+?&sid=\d+?&seekfid=.+?&page=").Value;
                         }
                         else
                         {
@@ -201,17 +201,12 @@ namespace DoujinManager
                         search_currect_page = page;
                     }
 
-                    Regex rxd = new Regex("(?<=论坛提示.*?<tr class=\"f_one\"><td><center><br /><br /><br />).*?(?=<br /><br /></center><br /><br /></td></tr>)");
-                    if (rxd.IsMatch(html)) { Messager(this, new DoujinSiteEventArgs(rxd.Match(html).Value)); break; }
+                    if (Regex.IsMatch(html, "(?<=论坛提示.*?<tr class=\"f_one\"><td><center><br /><br /><br />).*?(?=<br /><br /></center><br /><br /></td></tr>)")) { Messager(this, new DoujinSiteEventArgs(Regex.Match(html, "(?<=论坛提示.*?<tr class=\"f_one\"><td><center><br /><br /><br />).*?(?=<br /><br /></center><br /><br /></td></tr>)").Value)); break; }
 
-                    Regex rx2 = new Regex("<tr class=\"tr3 tac\">.*?</tr>");
-                    foreach (Match row in rx2.Matches(html))
+                    foreach (Match row in Regex.Matches(html, "<tr class=\"tr3 tac\">.*?</tr>"))
                     {
-                        Regex rx3 = new Regex(@"tid=\d+");
-                        string tid = rx3.Match(row.Value).Value;
-                        Regex rx4 = new Regex("(?<=target=\"_blank\">).*?(?=</a></th>)");
-                        Regex rx5 = new Regex("<.*?>");
-                        string title = rx5.Replace(rx4.Match(row.Value).Value, "");
+                        string tid = Regex.Match(row.Value, @"tid=\d+").Value;
+                        string title = new Regex("<.*?>").Replace(Regex.Match(row.Value, "(?<=target=\"_blank\">).*?(?=</a></th>)").Value, "");
                         result.Add(new string[] { title, "http://bbs.soul-plus.net/read.php?" + tid });
                     }
                     break;
@@ -219,23 +214,18 @@ namespace DoujinManager
                     searchurl = "http://exhentai.org/?page=" + System.Convert.ToString(page - 1) + "&f_doujinshi=on&f_manga=on&f_artistcg=on&f_gamecg=on&f_western=on&f_non-h=on&f_imageset=on&f_cosplay=on&f_asianporn=on&f_misc=on&f_search=" + keyword + "&f_apply=Apply Filter";
                     html = DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(searchurl, null, null, cookie, true), Encoding.UTF8);
 
-                    if (new Regex("No hits found").IsMatch(html)) { Messager(this, new DoujinSiteEventArgs("未找到结果")); break; }
-                    MatchCollection mc = new Regex(@"(?<=return false"">)\d+(?=</a></td>)").Matches(html);
+                    if (Regex.IsMatch(html, "No hits found")) { Messager(this, new DoujinSiteEventArgs("未找到结果")); break; }
+                    MatchCollection mc = Regex.Matches(html, @"(?<=return false"">)\d+(?=</a></td>)");
                     search_all_page = System.Convert.ToInt32(mc[mc.Count - 1].Value);
-                    search_currect_page = System.Convert.ToInt32(new Regex(@"(?<=ptds""><.*?>)\d+?(?=<)").Match(html).Value);
+                    search_currect_page = System.Convert.ToInt32(Regex.Match(html, @"(?<=ptds""><.*?>)\d+?(?=<)").Value);
                     search_page_url = null;
 
-                    Regex rh = new Regex("Uploader</th></tr>.*?</table>", RegexOptions.Singleline);
-                    html = rh.Match(html).Value;
-                    Regex rh2 = new Regex("<tr class=\"gtr\\d\">.*?</tr>");
-                    foreach (Match row in rh2.Matches(html))
+                    html = Regex.Match(html, "Uploader</th></tr>.*?</table>", RegexOptions.Singleline).Value;
+                    foreach (Match row in Regex.Matches(html, "<tr class=\"gtr\\d\">.*?</tr>"))
                     {
-                        Regex rh3 = new Regex("<a href=\"http://exhentai.org/g/\\d+/.*?</a>");
-                        html = rh3.Match(row.Value).Value;
-                        Regex rh4 = new Regex("(?<=<a href=\"http://exhentai.org/g/).*?(?=\")");
-                        string gid_addr = rh4.Match(html).Value;
-                        Regex rh5 = new Regex("(?<=>).*(?=<)");
-                        string title = rh5.Match(html).Value;
+                        html = Regex.Match(row.Value, "<a href=\"http://exhentai.org/g/\\d+/.*?</a>").Value;
+                        string gid_addr = Regex.Match(html, "(?<=<a href=\"http://exhentai.org/g/).*?(?=\")").Value;
+                        string title = Regex.Match(html, "(?<=>).*(?=<)").Value;
                         result.Add(new string[] { title, "http://exhentai.org/g/" + gid_addr });
                     }
                     break;
@@ -261,11 +251,9 @@ namespace DoujinManager
                 case 1:
                     if (webcontent_cache.ContainsKey(target_url)) { html = webcontent_cache[target_url]; }
                     else { html = webcontent_cache.GetOrAdd(target_url, DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(target_url, null, null, cookie, true), Encoding.UTF8)); }
-                    Regex rx = new Regex("(?<=<div class=\"tpc_content\">.*?<img src=\").*?(?=\")");
-                    foreach (Match row in rx.Matches(html))
+                    foreach (Match row in Regex.Matches(html, "(?<=<div class=\"tpc_content\">.*?<img src=\").*?(?=\")"))
                     {
-                        Regex rx2 = new Regex(@"^images/");
-                        if (rx2.IsMatch(row.Value))
+                        if (Regex.IsMatch(row.Value, @"^images/"))
                         {
                             continue;
                         }
@@ -279,8 +267,7 @@ namespace DoujinManager
                 case 2:
                     if (webcontent_cache.ContainsKey(target_url)) { html = webcontent_cache[target_url]; }
                     else { html = webcontent_cache.GetOrAdd(target_url, DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(target_url, null, null, cookie, true), Encoding.UTF8)); }
-                    Regex rh = new Regex("(?<=<div id=\"gd1\"><img src=\").*?(?=\")");
-                    result = rh.Match(html).Value;
+                    result = Regex.Match(html, "(?<=<div id=\"gd1\"><img src=\").*?(?=\")").Value;
                     break;
             }
             return result;
@@ -305,47 +292,43 @@ namespace DoujinManager
                     if (webcontent_cache.ContainsKey(target_url)) { html = webcontent_cache[target_url]; }
                     else { html = webcontent_cache.GetOrAdd(target_url, DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(target_url, null, null, cookie, true), Encoding.UTF8)); }
                     html = html.Replace("&amp;", "&").Replace("&#46;", ".");
-                    if (new Regex("若发现会员采用欺骗的方法获取财富,请立刻举报,我们会对会员处以2-N倍的罚金,严重者封掉ID!").IsMatch(html))
+                    if (Regex.IsMatch(html, "若发现会员采用欺骗的方法获取财富,请立刻举报,我们会对会员处以2-N倍的罚金,严重者封掉ID!"))
                     {
-                        string target2_url = "http://bbs.soul-plus.net/" + new Regex(@"(?<=我付钱"" class=""btn"" onclick=""location.href=').*?(?='"")").Match(html).Value;
+                        string target2_url = "http://bbs.soul-plus.net/" + Regex.Match(html, @"(?<=我付钱"" class=""btn"" onclick=""location.href=').*?(?='"")").Value;
                         html = DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(target2_url, null, null, cookie, true), Encoding.UTF8);
                         html = DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(target_url, null, null, cookie, true), Encoding.UTF8);
                         webcontent_cache[target_url] = html;
                         html = html.Replace("&amp;", "&").Replace("&#46;", ".");
-                        html = new Regex(@"<blockquote class=""blockquote"">.*?</blockquote>").Match(html).Value;
+                        html = Regex.Match(html, @"<blockquote class=""blockquote"">.*?</blockquote>").Value;
                     }
                     else
                     {
-                        html = new Regex(@"<div class=""tpc_content"">.*?</th> </tr>").Match(html).Value;
+                        html = Regex.Match(html, @"<div class=""tpc_content"">.*?</th> </tr>").Value;
                     }
-                    MatchCollection ma = new Regex(@"(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?").Matches(html);
+                    MatchCollection ma = Regex.Matches(html, @"(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?");
                     foreach (Match row in ma)
                     {
-                        if (new Regex("jbpan").IsMatch(row.Value)) { result.Add(new ArrayList { Global.downmethod.jbpan, row.Value }); }
-                        else if (new Regex("pan.hacg.me").IsMatch(row.Value)) { result.Add(new ArrayList { Global.downmethod.jbpan, row.Value }); }
-                        else if (new Regex("howfile").IsMatch(row.Value)) { result.Add(new ArrayList { Global.downmethod.howfile, row.Value }); }
-                        else if (new Regex("pan.baidu").IsMatch(row.Value)) { result.Add(new ArrayList { Global.downmethod.baidupan, row.Value }); }
-                        else if (new Regex("kuai.xunlei").IsMatch(row.Value)) { result.Add(new ArrayList { Global.downmethod.xunleikuai, row.Value }); }
-                        else if (new Regex("115.com").IsMatch(row.Value)) { result.Add(new ArrayList { Global.downmethod.pan115, row.Value }); }
+                        if (Regex.IsMatch(row.Value, "jbpan")) { result.Add(new ArrayList { Global.downmethod.jbpan, row.Value }); }
+                        else if (Regex.IsMatch(row.Value, "pan.hacg.me")) { result.Add(new ArrayList { Global.downmethod.jbpan, row.Value }); }
+                        else if (Regex.IsMatch(row.Value, "howfile")) { result.Add(new ArrayList { Global.downmethod.howfile, row.Value }); }
+                        else if (Regex.IsMatch(row.Value, "pan.baidu")) { result.Add(new ArrayList { Global.downmethod.baidupan, row.Value }); }
+                        else if (Regex.IsMatch(row.Value, "kuai.xunlei")) { result.Add(new ArrayList { Global.downmethod.xunleikuai, row.Value }); }
+                        else if (Regex.IsMatch(row.Value, "115.com")) { result.Add(new ArrayList { Global.downmethod.pan115, row.Value }); }
                     }
                     break;
                 case 2:
                     if (webcontent_cache.ContainsKey(target_url)) { html = webcontent_cache[target_url]; }
                     else { html = webcontent_cache.GetOrAdd(target_url, DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(target_url, null, null, cookie, true), Encoding.UTF8)); }
-                    Regex rx = new Regex(@"(?<=onclick=""return popUp\(').*?(?=',\d+,\d+\)"">.*? Download)");
-                    foreach (Match row in rx.Matches(html))
+                    foreach (Match row in Regex.Matches(html, @"(?<=onclick=""return popUp\(').*?(?=',\d+,\d+\)"">.*? Download)"))
                     {
                         html = DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(HttpUtility.HtmlDecode(row.Value), null, null, cookie, true), Encoding.UTF8);
-                        Regex rx2 = new Regex("archiver");
-                        if (rx2.IsMatch(row.Value))
+                        if (Regex.IsMatch(row.Value, "archiver"))
                         {
-                            Regex rx3 = new Regex(@"(?<=<form action="").*?(?="" method=""post"">)");
-                            result.Add(new ArrayList { Global.downmethod.HT_archive, HttpUtility.HtmlDecode(rx3.Match(html).Value) });
+                            result.Add(new ArrayList { Global.downmethod.HT_archive, HttpUtility.HtmlDecode(Regex.Match(html, @"(?<=<form action="").*?(?="" method=""post"">)").Value) });
                         }
                         else
                         {
-                            Regex rx3 = new Regex(@"(?<=<td colspan=""5""> &nbsp; <a href="").*?(?="")");
-                            foreach (Match row2 in rx3.Matches(html))
+                            foreach (Match row2 in Regex.Matches(html, @"(?<=<td colspan=""5""> &nbsp; <a href="").*?(?="")"))
                             {
                                 result.Add(new ArrayList { Global.downmethod.BT, HttpUtility.HtmlDecode(row2.Value) });
                             }
@@ -374,18 +357,17 @@ namespace DoujinManager
                     if (webcontent_cache.ContainsKey(target_url)) { html = webcontent_cache[target_url]; }
                     else { html = webcontent_cache.GetOrAdd(target_url, DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(target_url, null, null, cookie, true), Encoding.UTF8)); }
                     html = html.Replace("&amp;", "&").Replace("&#46;", ".");
-                    if (new Regex("若发现会员采用欺骗的方法获取财富,请立刻举报,我们会对会员处以2-N倍的罚金,严重者封掉ID!").IsMatch(html))
+                    if (Regex.IsMatch(html, "若发现会员采用欺骗的方法获取财富,请立刻举报,我们会对会员处以2-N倍的罚金,严重者封掉ID!"))
                     {
-                        string target2_url = "http://bbs.soul-plus.net/" + new Regex(@"(?<=我付钱"" class=""btn"" onclick=""location.href=').*?(?='"")").Match(html).Value;
+                        string target2_url = "http://bbs.soul-plus.net/" + Regex.Match(html, @"(?<=我付钱"" class=""btn"" onclick=""location.href=').*?(?='"")").Value;
                         html = DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(target2_url, null, null, cookie, true), Encoding.UTF8);
                         html = DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(target_url, null, null, cookie, true), Encoding.UTF8);
                         webcontent_cache[target_url] = html;
                         html = html.Replace("&amp;", "&").Replace("&#46;", ".");
                     }
-                    Regex ra = new Regex(@"(?<=(密[码碼]|pw|passwd|password|提取[码碼]|提取)(|<(|/)\w+>)(:|：| +?)).*?(?=[  ]*?<)");
-                    if (ra.IsMatch(html))
+                    if (Regex.IsMatch(html, @"(?<=(密[码碼]|pw|passwd|password|提取[码碼]|提取)(|<(|/)\w+>)(:|：| +?)).*?(?=[  ]*?<)"))
                     {
-                        result = ra.Match(html).Value;
+                        result = Regex.Match(html, @"(?<=(密[码碼]|pw|passwd|password|提取[码碼]|提取)(|<(|/)\w+>)(:|：| +?)).*?(?=[  ]*?<)").Value;
                     }
                     break;
                 case 2:
@@ -411,10 +393,10 @@ namespace DoujinManager
             Regex brackets = new Regex(@"^[  ]*?[(\[【]|[)\]】] *?$");
             Regex space = new Regex(@"^([  ]*)");
             title = title.Replace("&nbsp;", " ").Replace("&amp;", "&").Replace("&#46;", ".").Replace("(同人誌)", "").Replace("(自扫)", "").Replace("[自扫]", "");
-            MatchCollection lgMatches = new Regex(@"([  ]*)(\[.+?\]|【.+?】|\(.+?\))").Matches(title);
+            MatchCollection lgMatches = Regex.Matches(title, @"([  ]*)(\[.+?\]|【.+?】|\(.+?\))");
             foreach (Match lgMatch in lgMatches)
             {
-                if (new Regex("[汉漢]化|CE|中文").IsMatch(lgMatch.Value))
+                if (Regex.IsMatch(lgMatch.Value, "[汉漢]化|CE|中文"))
                 {
                     localization_group = brackets.Replace(lgMatch.Value, "");
                     title = title.Replace(lgMatch.Value, "");
@@ -422,7 +404,7 @@ namespace DoujinManager
                     is_doujin = true;
                 }
             }
-            Match partyMatch = new Regex(@"^([  ]*)\(.+?\)").Match(title);
+            Match partyMatch = Regex.Match(title, @"^([  ]*)\(.+?\)");
             if (partyMatch.Success)
             {
                 party = brackets.Replace(partyMatch.Value, "");
@@ -430,7 +412,7 @@ namespace DoujinManager
                 party = space.Replace(party, "");
                 is_doujin = true;
             }
-            Match authorMatch = new Regex(@"^([  ]*)(\[.+?\]|\(.+?\))").Match(title);
+            Match authorMatch = Regex.Match(title, @"^([  ]*)(\[.+?\]|\(.+?\))");
             if (authorMatch.Success)
             {
                 author = brackets.Replace(authorMatch.Value, "");
@@ -440,7 +422,7 @@ namespace DoujinManager
                 NameFormatter_ds(ref title, ref is_doujin, ref author);
                 if (author == null || author == "") { author = party; party = ""; }
             }
-            Match nameMatch = new Regex(@"^([  ]*)[\w :"";☆※★▽◇□♡❤×○△～',.~!@#$%/\\^&*_+|`=！…?—：“”：；‘’，。、・-]+").Match(title);
+            Match nameMatch = Regex.Match(title, @"^([  ]*)[\p{P}\p{S}\p{Zs}\w-[\[\]()【】（）]]+");
             if (nameMatch.Success)
             {
                 name = brackets.Replace(nameMatch.Value, "");
@@ -448,7 +430,7 @@ namespace DoujinManager
                 name = space.Replace(name, "");
                 name = new Regex(@"[  ]+$").Replace(name, "");
             }
-            MatchCollection tagMatches = new Regex(@"\[.+?\]|【.+?】|\(.+?\)").Matches(title);
+            MatchCollection tagMatches = Regex.Matches(title, @"\[.+?\]|【.+?】|\(.+?\)");
             foreach (Match tagMatch in tagMatches) { tag.Add(brackets.Replace(tagMatch.Value, "")); }
             if (tag.Exists(o => o == "chinese") && localization_group == "未汉化") { localization_group = "已汉化，汉化组未知"; }
             return is_doujin;
@@ -457,7 +439,7 @@ namespace DoujinManager
         private void NameFormatter_ds(ref string title, ref Boolean is_doujin, ref string author)
         {
             Regex space = new Regex(@"^([  ]*)");
-            Match authorMatch = new Regex(@"^([  ]*)(\[.+?\]|\(.+?\))").Match(title);
+            Match authorMatch = Regex.Match(title, @"^([  ]*)(\[.+?\]|\(.+?\))");
             if (authorMatch.Success)
             {
                 author = author + authorMatch.Value;
@@ -478,9 +460,9 @@ namespace DoujinManager
             html = DecompressWebResponse.Decompress(HttpWebResponseUtility.CreateGetHttpResponse(Threadurl, null, null, cookie, true), Encoding.UTF8);
             if (page == 1)
             {
-                if (new Regex(@"<li class=""pagesone"">").IsMatch(html))
+                if (Regex.IsMatch(html, @"<li class=""pagesone"">"))
                 {
-                    Match match_page = new Regex(@"Pages: (\d+)\/(\d+)").Match(html);
+                    Match match_page = Regex.Match(html, @"Pages: (\d+)\/(\d+)");
                     search_currect_page = System.Convert.ToInt32(match_page.Groups[1].Value);
                     search_all_page = System.Convert.ToInt32(match_page.Groups[2].Value);
                 }
@@ -494,18 +476,17 @@ namespace DoujinManager
             {
                 search_currect_page = page;
             }
-            Regex rxd = new Regex("(?<=论坛提示.*?<tr class=\"f_one\"><td><center><br /><br /><br />).*?(?=<br /><br /></center><br /><br /></td></tr>)");
-            if (rxd.IsMatch(html)) { Messager(this, new DoujinSiteEventArgs(rxd.Match(html).Value)); }
-
-            if (page == 1) { html = new Regex("普通主题.*").Match(html).Value; }
-            Regex rx2 = new Regex("tr3 t_one\">.*?</tr>");
-            foreach (Match row in rx2.Matches(html))
+            if (Regex.IsMatch(html, "(?<=论坛提示.*?<tr class=\"f_one\"><td><center><br /><br /><br />).*?(?=<br /><br /></center><br /><br /></td></tr>)"))
             {
-                Regex rx3 = new Regex(@"tid=\d+");
-                string tid = rx3.Match(row.Value).Value;
-                Regex rx4 = new Regex(@"(?<=id=""a_ajax_\d+"">).*?(?=</a></h3>)");
+                Messager(this, new DoujinSiteEventArgs(Regex.Match(html, "(?<=论坛提示.*?<tr class=\"f_one\"><td><center><br /><br /><br />).*?(?=<br /><br /></center><br /><br /></td></tr>)").Value));
+            }
+
+            if (page == 1) { html = Regex.Match(html, "普通主题.*").Value; }
+            foreach (Match row in Regex.Matches(html, "tr3 t_one\">.*?</tr>"))
+            {
+                string tid = Regex.Match(row.Value, @"tid=\d+").Value;
                 Regex rx5 = new Regex("<.*?>");
-                string title = rx5.Replace(rx4.Match(row.Value).Value, "");
+                string title = rx5.Replace(Regex.Match(row.Value, @"(?<=id=""a_ajax_\d+"">).*?(?=</a></h3>)").Value, "");
                 result.Add(new string[] { title, "http://bbs.soul-plus.net/read.php?" + tid });
             }
             return result;
