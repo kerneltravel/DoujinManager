@@ -33,6 +33,7 @@ namespace DoujinManager
 
         public MainWindow()
         {
+            Regex.CacheSize = 25;
             InitializeComponent();
             InitializeSetting();
             if (!File.Exists("Configuration/cookie.xml"))
@@ -45,8 +46,9 @@ namespace DoujinManager
                 };
                 lw.ShowDialog();
             }
-            if (setting.soulplus_enabled) { cb_o_siteselect.Items.Add("soul-plus.net"); cb_o_siteselect.Text = "soul-plus.net"; }
+            if (setting.soulplus_enabled) { cb_o_siteselect.Items.Add("soul-plus.net"); }
             if (setting.hentai_enabled) { cb_o_siteselect.Items.Add("E-hentai.org"); }
+            if (cb_o_siteselect.Items.Count != 0) { cb_o_siteselect.Text = cb_o_siteselect.Items[0] as String; }
             //Universe.SaveSettings(setting, "Configuration/settings.xml");
             if (setting.use_proxy == 0) { WebRequest.DefaultWebProxy = null; }
             if (setting.use_proxy == 2) { WebRequest.DefaultWebProxy = new WebProxy(setting.proxy, setting.proxy_port); }
@@ -85,7 +87,7 @@ namespace DoujinManager
             Task.Factory.StartNew((o) =>
             {
                 this.Invoke((Action)delegate { this.lv_o.Cursor = Cursors.AppStarting; });
-                Match f = new Regex("(?<=^<--).+(?=-->$)").Match(tb_o_search.Text);
+                Match f = Regex.Match(tb_o_search.Text, "(?<=^<--).+(?=-->$)");
                 bool badkeyword = false;
                 List<string[]> search_result;
                 if (f.Success) { 
@@ -655,12 +657,36 @@ namespace DoujinManager
             ofd_s_defaultFolder.InitialDirectory = tb_s_defaultFolder.Text;
             if (ofd_s_defaultFolder.ShowDialog() == DialogResult.OK)
             {
-                if (Path.DirectorySeparatorChar == '\\') { tb_s_defaultFolder.Text = new Regex(@".*\\").Match(ofd_s_defaultFolder.FileName).Value; }
-                else { tb_s_defaultFolder.Text = new Regex(@".*" + Path.DirectorySeparatorChar).Match(ofd_s_defaultFolder.FileName).Value; }
+                if (Path.DirectorySeparatorChar == '\\') { tb_s_defaultFolder.Text = Regex.Match(ofd_s_defaultFolder.FileName, @".*\\").Value; }
+                else { tb_s_defaultFolder.Text = Regex.Match(ofd_s_defaultFolder.FileName, @".*" + Path.DirectorySeparatorChar).Value; }
             }
         }
 
+        private void btn_login_Click(object sender, EventArgs e)
+        {
+            Loginwindow lw = new Loginwindow();
+            lw.SendSettings += (senderd, ed) =>
+            {
+                setting.soulplus_enabled = ed.soulplus_enabled;
+                setting.hentai_enabled = ed.hentai_enabled;
+                if (!Directory.Exists("Configuration"))
+                {
+                    Directory.CreateDirectory("Configuration");
+                }
+                Universe.SaveSettings(setting, "Configuration/settings.xml");
+            };
+            lw.ShowDialog();
+            DSList[0] = new DoujinSite(Global.urls.hentai, CookieUtility.ReadCookie("Configuration/cookie.xml"));
+            DSList[1] = new DoujinSite(Global.urls.soulplus, CookieUtility.ReadCookie("Configuration/cookie.xml"));
+            cb_o_siteselect.Items.Clear();
+            if (setting.soulplus_enabled) { cb_o_siteselect.Items.Add("soul-plus.net"); }
+            if (setting.hentai_enabled) { cb_o_siteselect.Items.Add("E-hentai.org"); }
+            if (cb_o_siteselect.Items.Count != 0) { cb_o_siteselect.Text = cb_o_siteselect.Items[0] as String; }
+        }
+
         #endregion
+
+        
 
     }
 }

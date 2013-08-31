@@ -84,6 +84,7 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmi_Download = new System.Windows.Forms.ToolStripMenuItem();
             this.tt_o_lv_lvi = new System.Windows.Forms.ToolTip(this.components);
+            this.btn_login = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.Online.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -325,6 +326,7 @@
             // 
             // Setting
             // 
+            this.Setting.Controls.Add(this.btn_login);
             this.Setting.Controls.Add(this.p_s_pic_proxy);
             this.Setting.Controls.Add(this.p_s_proxy);
             this.Setting.Controls.Add(this.btn_s_defaultFolder);
@@ -634,6 +636,16 @@
             this.tt_o_lv_lvi.InitialDelay = 500;
             this.tt_o_lv_lvi.ReshowDelay = 100;
             // 
+            // btn_login
+            // 
+            this.btn_login.Location = new System.Drawing.Point(11, 227);
+            this.btn_login.Name = "btn_login";
+            this.btn_login.Size = new System.Drawing.Size(75, 23);
+            this.btn_login.TabIndex = 25;
+            this.btn_login.Text = "重新登录";
+            this.btn_login.UseVisualStyleBackColor = true;
+            this.btn_login.Click += new System.EventHandler(this.btn_login_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -722,6 +734,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Panel p_s_proxy;
         private System.Windows.Forms.Panel p_s_pic_proxy;
+        private System.Windows.Forms.Button btn_login;
 
 
     }
