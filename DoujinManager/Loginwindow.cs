@@ -39,7 +39,7 @@ namespace DoujinManager
 
         private void ll_hentai_reg_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://e-hentai.org/");
+            System.Diagnostics.Process.Start("http://forums.e-hentai.org/index.php?act=Reg&CODE=00");
         }
 
         private void btn_login_Click(object sender, EventArgs e)
@@ -62,7 +62,6 @@ namespace DoujinManager
                     cc.Add(hwr_ht.Cookies);
                     islogin = true;
                 }
-                islogin = true;
                 if (islogin)
                 {
                     if (!Directory.Exists("Configuration"))
