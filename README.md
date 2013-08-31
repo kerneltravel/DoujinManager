@@ -15,9 +15,18 @@ cross-platform support provided by mono<br />
 
 使用方法 Usage
 -----------------------------------
-Windows:[.net 4.0](http://www.microsoft.com/zh-cn/download/details.aspx?id=17718)<br />
-其他平台(Other Platform):[mono](http://www.go-mono.com/mono-downloads/download.html) 使用 "mono doujinmanager.exe" 运行/Start using "mono doujinmanager.exe"<br />
+Windows:需要[.NET Framework 4](http://www.microsoft.com/zh-cn/download/details.aspx?id=17718)<br />
+其他平台(Other Platform):需要[mono](http://www.go-mono.com/mono-downloads/download.html)<br />
+使用 "mono doujinmanager.exe" 运行<br />
+<br />
 右键封面可下载<br />
+<br />
+<br />
+
+Windows:need[.NET Framework 4](http://www.microsoft.com/zh-cn/download/details.aspx?id=17718)<br />
+(Other Platform):need[mono](http://www.go-mono.com/mono-downloads/download.html)<br />
+Start using "mono doujinmanager.exe"<br />
+<br />
 Right-Click Cover can download it<br />
 
 支持网站
@@ -34,7 +43,7 @@ Right-Click Cover can download it<br />
 5、[115](http://115.com) 暂无支持计划<br />
 6、[E-hentai 暴力抓取](http://e-hentai.org) 暂未支持<br />
 7、[E-hentai GP下载](http://e-hentai.org) 暂未支持<br />
-8、[BT下载（借由迅雷离线实现）](http://e-hentai.org) 暂未支持<br />
+8、[BT下载（借由迅雷离线实现）](http://lixian.xunlei.com) 暂未支持<br />
 
 简单的搜索命令语法（soulplus可用）
 -----------------------------------
