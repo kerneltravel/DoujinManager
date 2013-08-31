@@ -15,16 +15,16 @@ cross-platform support provided by mono<br />
 
 使用方法 Usage
 -----------------------------------
-Windows:需要[.NET Framework 4](http://www.microsoft.com/zh-cn/download/details.aspx?id=17718)<br />
-其他平台(Other Platform):需要[mono](http://www.go-mono.com/mono-downloads/download.html)<br />
+Windows: 需要 [.NET Framework 4](http://www.microsoft.com/zh-cn/download/details.aspx?id=17718)<br />
+其他平台: 需要 [mono](http://www.go-mono.com/mono-downloads/download.html)<br />
 使用 "mono doujinmanager.exe" 运行<br />
 <br />
 右键封面可下载<br />
 <br />
 <br />
 
-Windows:need[.NET Framework 4](http://www.microsoft.com/zh-cn/download/details.aspx?id=17718)<br />
-(Other Platform):need[mono](http://www.go-mono.com/mono-downloads/download.html)<br />
+Windows: need [.NET Framework 4](http://www.microsoft.com/zh-cn/download/details.aspx?id=17718)<br />
+Other Platform: need [mono](http://www.go-mono.com/mono-downloads/download.html)<br />
 Start using "mono doujinmanager.exe"<br />
 <br />
 Right-Click Cover can download it<br />
